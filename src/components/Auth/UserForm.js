@@ -77,7 +77,16 @@ const UserForm = () => {
               email: emailRef.current.value,
               password: passwordRef.current.value
             }        
-            //login backend logic
+            const res = await axios.post('http://localhost:4000/users/user-login', userObj) //send login request
+            //check for errors
+            if(!res.data){
+              throw new Error('Network error!');
+            }else if(res.data.err){
+              throw new Error(res.data.err);
+            }else{
+              dispatch(authActions.login({token: res.data.token})); //intialize central user state
+              history.replace('/')
+            }
             emailRef.current.value = '';
             passwordRef.current.value = '';
           }
