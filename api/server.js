@@ -15,7 +15,10 @@ const app = express();
 const logStream = fs.createWriteStream(path.join(__dirname, 'server.log'), {flags:'a'});
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+}));
 app.use(morgan('combined', {stream: logStream}));
 
 app.use(bodyParser.json({extended:false}));
