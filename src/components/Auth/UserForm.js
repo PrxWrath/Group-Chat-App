@@ -48,7 +48,13 @@ const UserForm = () => {
               password: passwordRef.current.value,
               phone: phoneRef.current.value
             }        
-            //signup backend logic
+            const res = await axios.post('http://localhost:4000/users/user-signup', userObj); //send signup request
+            if(res.data.error){
+              throw new Error(res.data.error)
+            }else{
+              setAlert(<Alert variant='success'>{res.data.msg}</Alert>)
+              setTimeout(()=>{setAlert(<></>)}, 3000)
+            }
             emailRef.current.value = '';
             passwordRef.current.value = '';
             nameRef.current.value = '';
