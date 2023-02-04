@@ -1,0 +1,6 @@
+.chatListContainer{
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 74vh;
+    width: 100%;
+}

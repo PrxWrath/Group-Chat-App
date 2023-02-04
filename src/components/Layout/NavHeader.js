@@ -3,13 +3,18 @@ import {NavLink, useHistory} from "react-router-dom";
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { authActions } from "../../store/AuthReducer";
+import axios from "axios";
 
 const Header = (props) => {
   const isLoggedIn = useSelector(state=>state.auth.isLoggedIn);
+  const token = useSelector(state=>state.auth.loginToken);
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const logoutHandler = ()=>{
+  const logoutHandler = async ()=>{
+    await axios.post('http://localhost:4000/users/user-logout', {}, {headers: {
+      'Authorization': token
+    }})
     dispatch(authActions.logout());
     history.replace('/auth')
   }

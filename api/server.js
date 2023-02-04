@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const sequelize = require('./util/database');
 const userRoute = require('./routes/users');
 const User = require('./models/user');
+const Active = require('./models/Active');
 const ForgotRequest = require('./models/Forgot');
 const helmet = require('helmet');
 const fs = require('fs');
@@ -30,6 +31,8 @@ app.use((req,res,next)=>{
 
 User.hasMany(ForgotRequest);
 ForgotRequest.belongsTo(User);
+User.hasMany(Active);
+Active.belongsTo(User);
 
 sequelize.sync().then(res=>{
     app.listen(4000);

@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 
 
 const UserForm = React.lazy(()=>import("./components/Auth/UserForm"));
+const Chats = React.lazy(()=>import("./components/Chats/Chats"));
+
 const App = () => {
   const isLoggedIn = useSelector(state=>state.auth.isLoggedIn);
 
@@ -15,10 +17,12 @@ const App = () => {
       <Suspense fallback={<Loader/>}>
         <Switch>
           <Route exact path='/auth'>
+            <UserForm/>
             {!isLoggedIn&&<UserForm/>}
           </Route>
           <Route exact path='/'>
             {!isLoggedIn&&<UserForm/>}
+            {isLoggedIn&&<Chats/>}
           </Route>
         </Switch>
       </Suspense>

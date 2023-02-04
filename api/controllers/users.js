@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const ForgotRequest = require('../models/Forgot');
+const Active = require('../models/Active');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {v4: uuid4} = require('uuid');
@@ -40,12 +41,13 @@ exports.postFindUser = async(req,res,next) => {
         if(!data){
             res.json({err: 'User not found!'}).status(404);
         }else{
-            bcrypt.compare(req.body.password, data.password, (err, cmp)=>{
+            bcrypt.compare(req.body.password, data.password, async (err, cmp)=>{
                 if(!cmp){
                     res.json({err: 'Invalid Credentials! User not authorized'}).status(401);
                 }else{
                     const token = generateToken(data.id, data.name);
-                    res.status(200).json({token: token, msg:'User login successfull'}); //send login token and premium status
+                    await data.createActiveuser(); //create an active user entry on login
+                    res.status(200).json({token: token, email: req.body.email, msg:'User login successfull'}); //send login token and premium status
                 }
             })
         }
@@ -112,4 +114,28 @@ exports.postResetPassword = async(req,res,next) => {
     }
 }
 
+exports.getActiveUsers = async (req,res,next) => {
+    try{
+        const active = await User.findAll(
+            {   
+                attributes: ['id', 'name', 'email'],
+                include: {model: Active, required: true} //INNER JOIN
+            }
+            );
+            res.status(200).json({active});
 
+    }catch(err){
+        logger.write(err.stack)
+    }
+}
+
+exports.postRemoveActiveUser = async (req,res,next) => {
+    try{
+        const user = req.user;
+        const rem = await Active.findOne({where: {userId: user.id}});
+        await rem.destroy(); //remove active user on logout
+        res.status(200).json({msg:'Removed active user'});
+    }catch(err){
+        logger.write(err.stack);
+    }
+}
