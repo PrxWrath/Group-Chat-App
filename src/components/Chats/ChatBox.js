@@ -3,7 +3,7 @@ import { Button, Col, Form, Row } from 'react-bootstrap'
 import {useSelector} from 'react-redux';
 import axios from 'axios'
 
-const ChatBox = () => {
+const ChatBox = (props) => {
    const msgRef = useRef();
    const token = useSelector(state=>state.auth.loginToken)
    
@@ -18,6 +18,7 @@ const ChatBox = () => {
             }});
         }
         msgRef.current.value = ''
+        props.load();
      }catch(err){
         console.log("Something went wrong while sending message...")
      }

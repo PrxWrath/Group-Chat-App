@@ -24,8 +24,23 @@ const Chats = () => {
     }
  }
 
+ //load all chats from backend
+ const loadChats = async() => {
+    try{
+        const res = await axios.get('http://localhost:4000/chats');    
+        if(!res.data){
+            throw new Error();
+        }else{
+            setChats(res.data);
+        }     
+    }catch(err){
+        console.log("No chats to display");
+    }
+ }
+
  useEffect(()=>{
     loadActiveUsers();
+    loadChats();
  }, [])
  return (
     <Container fluid style={{paddingTop:'5rem'}}>
@@ -44,7 +59,7 @@ const Chats = () => {
                 </Row>
                 <Row>
                     <Col xs lg className='p-1'>
-                        <ChatBox />
+                        <ChatBox load={loadChats}/>
                     </Col>
                 </Row>
             </Col>
