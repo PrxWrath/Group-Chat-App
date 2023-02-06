@@ -1,16 +1,36 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
+import {useSelector} from 'react-redux';
+import axios from 'axios'
 
 const ChatBox = () => {
-  return (
+   const msgRef = useRef();
+   const token = useSelector(state=>state.auth.loginToken)
+   
+   //send message to backend with specific user token
+   const sendChatHandler = async() => {
+     try{
+        if(msgRef.current.value){
+            await axios.post('http://localhost:4000/chats/send-chat', {
+                msg: msgRef.current.value
+            }, {headers: {
+                'Authorization': token
+            }});
+        }
+        msgRef.current.value = ''
+     }catch(err){
+        console.log("Something went wrong while sending message...")
+     }
+   }
+   return (
     <Form className='bg-dark p-2 w-100'>
         <Form.Group className='w-100'>
             <Row>
                 <Col xs="9" lg="11">
-                    <Form.Control type="text" placeholder="Type your message"/>
+                    <Form.Control type="text" placeholder="Type your message" ref={msgRef}/>
                 </Col>
                 <Col xs="3" lg="1">
-                    <Button variant="warning">Send</Button>
+                    <Button onClick={sendChatHandler} variant="warning">Send</Button>
                 </Col>
             </Row>
         </Form.Group>

@@ -17,7 +17,6 @@ const App = () => {
       <Suspense fallback={<Loader/>}>
         <Switch>
           <Route exact path='/auth'>
-            <UserForm/>
             {!isLoggedIn&&<UserForm/>}
           </Route>
           <Route exact path='/'>

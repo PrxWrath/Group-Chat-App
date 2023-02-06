@@ -10,7 +10,7 @@ const ChatList = (props) => {
     <div className={classes.chatListContainer}>
         {props.active?.map(active=>{
             return(
-                <Alert variant={active.email===email? 'warning': 'primary'} className="fw-bold text-center w-75 mx-auto">
+                <Alert key={active.id} variant={active.email===email? 'warning': 'primary'} className="fw-bold text-center w-75 mx-auto">
                     - {active.email===email? 'You' : `${active.name}`} joined -
                 </Alert>
             )
