@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useRef} from 'react'
 import { Alert, Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import classes from './ChatList.module.css';
@@ -6,8 +6,15 @@ import classes from './ChatList.module.css';
 
 const ChatList = (props) => {
   const email = useSelector(state=>state.auth.loginEmail);
+  const endRef = useRef(); //bottom of chat conatiner
+  
+  //scroll to newest chat
+  useEffect(()=>{
+   endRef.current.scrollBy(0,10000,{behaviour: "smooth"});
+  },[props.chats])
+
   return (
-    <div className={classes.chatListContainer}>
+    <div className={classes.chatListContainer} ref={endRef}>
         {props.active?.map(active=>{
             return(
                 <Alert key={active.id} variant={active.email===email? 'warning': 'primary'} className="fw-bold text-center w-75 mx-auto">

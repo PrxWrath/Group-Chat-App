@@ -38,10 +38,15 @@ const Chats = () => {
     }
  }
 
+ //load chats and active users evry 1s
  useEffect(()=>{
-    loadActiveUsers();
-    loadChats();
+    let interval = setInterval(() => {
+        loadActiveUsers();
+        loadChats();
+    }, 1000);
+    return ()=>clearInterval(interval);
  }, [])
+
  return (
     <Container fluid style={{paddingTop:'5rem'}}>
         <Row>
@@ -54,7 +59,7 @@ const Chats = () => {
                 {alert}
                 <Row>
                     <Col xs lg>
-                        <ChatList active={Object.values(active)} chats={chats} />
+                        <ChatList active={Object.values(active)} chats={chats}/>
                     </Col>
                 </Row>
                 <Row>
