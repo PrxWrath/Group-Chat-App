@@ -1,5 +1,6 @@
 const logger = require('../services/logger');
 const Chat = require('../models/Chat');
+const { Op } = require('sequelize');
 
 exports.postAddChat = async (req,res,next) => {
     try{
@@ -16,9 +17,18 @@ exports.postAddChat = async (req,res,next) => {
 
 exports.getChats = async(req,res,next) => {
     try{
-        const chats = await Chat.findAll();
+        let msgId = req.params.lastMsgId;
+        
+        //fetch new chats
+        let chats = await Chat.findAll({where: {
+            id: {
+                [Op.gt]: +msgId
+            }
+        }})
         if(chats){
             res.status(200).json(chats);
+        }else{
+            res.status(200).json({msg:'No new chats found'});
         }
 
     }catch(err){

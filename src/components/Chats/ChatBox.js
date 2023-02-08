@@ -19,6 +19,7 @@ const ChatBox = (props) => {
         }
         msgRef.current.value = ''
         props.load();
+        props.setScroll(prev=>!prev)
      }catch(err){
         console.log("Something went wrong while sending message...")
      }

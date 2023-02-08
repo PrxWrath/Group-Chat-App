@@ -8,6 +8,7 @@ const Chats = () => {
  const [active, setActive] = useState([]);
  const [chats, setChats] = useState([]);
  const [alert, setAlert] = useState(<></>);
+ const [scroll, setScroll] = useState(false);
 
  //load the list of currently active users
  const loadActiveUsers = async () => {
@@ -27,24 +28,42 @@ const Chats = () => {
  //load all chats from backend
  const loadChats = async() => {
     try{
-        const res = await axios.get('http://localhost:4000/chats');    
+        const chats = JSON.parse(localStorage.getItem('Chats'));
+        let lastMsgId = 0;
+        if(chats && chats.length>0){
+          lastMsgId = chats[chats.length-1].id
+        }
+        const res = await axios.get(`http://localhost:4000/chats/${lastMsgId}`);    
         if(!res.data){
             throw new Error();
         }else{
-            setChats(res.data);
+            let data = res.data;
+            if(chats && chats.length>0){
+              data = chats.concat(res.data); //merge the old and new chats
+            } 
+            if(data.length>10){
+                while(data.length>10){
+                    data.shift(); //remove the oldest chats until only recent 10 chats remain
+                }
+              }
+            localStorage.setItem('Chats', JSON.stringify(data));
+            setChats(JSON.parse(localStorage.getItem('Chats')));
         }     
     }catch(err){
-        console.log("No chats to display");
+        console.log(err);
     }
  }
 
  //load chats and active users evry 1s
  useEffect(()=>{
-    let interval = setInterval(() => {
-        loadActiveUsers();
-        loadChats();
-    }, 1000);
-    return ()=>clearInterval(interval);
+    //real-time logic
+    // let interval = setInterval(() => {
+    //     loadActiveUsers();
+    //     loadChats();
+    // }, 1000);
+    // return ()=>clearInterval(interval);
+    loadActiveUsers();
+    loadChats();
  }, [])
 
  return (
@@ -59,12 +78,12 @@ const Chats = () => {
                 {alert}
                 <Row>
                     <Col xs lg>
-                        <ChatList active={Object.values(active)} chats={chats}/>
+                        <ChatList active={Object.values(active)} chats={chats} scroll={scroll}/>
                     </Col>
                 </Row>
                 <Row>
                     <Col xs lg className='p-1'>
-                        <ChatBox load={loadChats}/>
+                        <ChatBox load={loadChats} setScroll = {setScroll}/>
                     </Col>
                 </Row>
             </Col>

@@ -122,7 +122,7 @@ exports.getActiveUsers = async (req,res,next) => {
                 include: {model: Active, required: true} //INNER JOIN
             }
             );
-            res.status(200).json({active:active.reverse()});
+            res.status(200).json({active});
 
     }catch(err){
         logger.write(err.stack)
