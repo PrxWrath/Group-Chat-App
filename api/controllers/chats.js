@@ -1,13 +1,15 @@
 const logger = require('../services/logger');
-const Chat = require('../models/Chat');
+const Group = require('../models/Group');
 const { Op } = require('sequelize');
+
 
 exports.postAddChat = async (req,res,next) => {
     try{
         const user = req.user;
         await user.createChat({
             message: req.body.msg,
-            from: `${user.email}-${user.name}`
+            groupId: req.body.group,
+            from: `${user.email} ${user.name}`
         })
         res.status(201).json({msg:'Created new message entry!'})
     }catch(err){
@@ -17,10 +19,12 @@ exports.postAddChat = async (req,res,next) => {
 
 exports.getChats = async(req,res,next) => {
     try{
-        let msgId = req.params.lastMsgId;
+        let msgId = req.body.lastMsgId;
+        let grpId = req.body.group;
         
         //fetch new chats
-        let chats = await Chat.findAll({where: {
+        const group = await Group.findByPk(grpId)
+        let chats = await group.getChats({where: {
             id: {
                 [Op.gt]: +msgId
             }
@@ -35,3 +39,33 @@ exports.getChats = async(req,res,next) => {
         logger.write(err.stack);
     }
 }
+
+exports.postCreateGroup = async(req,res,next) => {
+    try{
+        const user = req.user;
+
+        //create new group entry and add the first user
+        const group = await Group.create({
+            name:req.body.name,
+            groupImg: req.body.img? req.body.img: null,
+            admin: `${user.email} ${user.name}`
+        })
+
+        await group.addUser(user);
+
+        res.status(201).json({msg:'Group created'});
+    }catch(err){
+        logger.write(err.stack)
+    }
+}
+
+exports.getUserGroups = async(req,res,next) => {
+    try{
+        const groups = await req.user.getGroups();
+        
+        res.status(200).json(groups);
+    }catch(err){
+        logger.write(err.stack)
+    }
+}
+

@@ -8,6 +8,6 @@ router.post('/user-login', userController.postFindUser);
 router.post('/forgot-password', userController.postForgotPassword);
 router.get('/reset-password/:reset_id', userController.getResetPassword);
 router.post('/reset-password', userController.postResetPassword);
-router.get('/active-users', userController.getActiveUsers);
-router.post('/user-logout', userAuth.authenticate, userController.postRemoveActiveUser)
+router.post('/active-users', userAuth.authenticate, userController.postActiveUser);
+router.post('/remove-user', userAuth.authenticate, userController.postRemoveActiveUser)
 module.exports = router;

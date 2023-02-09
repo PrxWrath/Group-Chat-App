@@ -1,0 +1,14 @@
+.groupContainer{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100vh;
+    margin: 1rem;
+}
+
+.groupImage{
+    border-radius: 40px;
+    border: 1px solid goldenrod;
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: contain;
+}

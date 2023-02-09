@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {v4: uuid4} = require('uuid');
 const logger = require('../services/logger');
+const {Op} = require('sequelize');
 
 const generateToken = (id, name) => {
     return jwt.sign({userId: id, name}, process.env.USER_SECRET); //encrypt the userID to produce a unique token
@@ -12,10 +13,16 @@ const generateToken = (id, name) => {
 
 exports.postAddUser = async(req,res,next) => {
     try{
-        const data = await User.findOne({where: {email:req.body.email}});
+        const data = await User.findOne({where: {
+            [Op.or]: [
+                {email: req.body.email},
+                {name: req.body.name}
+            ]
+        }});
+
         if(data){
             res.json({
-                error: 'Account with provided email already exists!'
+                error: 'User Name or email already exists!'
             })
         }else{
             bcrypt.hash(req.body.password, 10, async(err, hash)=>{
@@ -46,7 +53,6 @@ exports.postFindUser = async(req,res,next) => {
                     res.json({err: 'Invalid Credentials! User not authorized'}).status(401);
                 }else{
                     const token = generateToken(data.id, data.name);
-                    await data.createActiveuser(); //create an active user entry on login
                     res.status(200).json({token: token, email: req.body.email, msg:'User login successfull'}); //send login token and premium status
                 }
             })
@@ -114,16 +120,20 @@ exports.postResetPassword = async(req,res,next) => {
     }
 }
 
-exports.getActiveUsers = async (req,res,next) => {
+exports.postActiveUser = async(req,res,next) => {
     try{
+        const user = req.user;
+        const prevActive = await Active.findAll({where: {userId: user.id}})
+        if(!prevActive || prevActive.length===0){
+            await user.createActiveuser({groupId: req.body.group}); //create an active user entry when a group is openend
+        }
         const active = await User.findAll(
             {   
                 attributes: ['id', 'name', 'email'],
-                include: {model: Active, required: true} //INNER JOIN
+                include: {model: Active, required: true, where:{groupId: req.body.group}} //INNER JOIN to get active users in group
             }
             );
-            res.status(200).json({active});
-
+        res.status(200).json(active);
     }catch(err){
         logger.write(err.stack)
     }
@@ -132,7 +142,12 @@ exports.getActiveUsers = async (req,res,next) => {
 exports.postRemoveActiveUser = async (req,res,next) => {
     try{
         const user = req.user;
-        const rem = await Active.findOne({where: {userId: user.id}});
+        const rem = await Active.findOne({where: {
+            [Op.and]:[
+            {userId: user.id},
+            {groupId: req.body.group}
+            ]
+        }});
         await rem.destroy(); //remove active user on logout
         res.status(200).json({msg:'Removed active user'});
     }catch(err){

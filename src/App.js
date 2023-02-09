@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 
 const UserForm = React.lazy(()=>import("./components/Auth/UserForm"));
-const Chats = React.lazy(()=>import("./components/Chats/Chats"));
+const Chats = React.lazy(()=>import("./components/Home/Home"));
 
 const App = () => {
   const isLoggedIn = useSelector(state=>state.auth.isLoggedIn);
