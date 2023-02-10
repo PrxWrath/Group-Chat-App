@@ -123,10 +123,17 @@ exports.postResetPassword = async(req,res,next) => {
 exports.postActiveUser = async(req,res,next) => {
     try{
         const user = req.user;
-        const prevActive = await Active.findAll({where: {userId: user.id}})
-        if(!prevActive || prevActive.length===0){
+        const prevActive = await Active.findOne({where: {
+            [Op.and]:[
+                {userId: user.id},
+                {groupId: req.body.group}
+                ]
+        }})
+
+        if(!prevActive){
             await user.createActiveuser({groupId: req.body.group}); //create an active user entry when a group is openend
         }
+        
         const active = await User.findAll(
             {   
                 attributes: ['id', 'name', 'email'],

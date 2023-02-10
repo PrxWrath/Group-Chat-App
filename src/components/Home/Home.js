@@ -13,6 +13,8 @@ const Chats = () => {
  const [activeGroup, setActiveGroup] = useState(null);
  const [groups, setGroups] = useState([]);
  const [invites, setInvites] = useState([])
+ const [UIShift, setUIShift] = useState(false);
+
  const token = useSelector(state=>state.auth.loginToken);
 
  //remove active user when the group is closed
@@ -50,6 +52,7 @@ const Chats = () => {
         console.log(err.message)
     }
   }
+  
  //load all chats from backend
  const loadChats = async() => {
     try{
@@ -85,32 +88,32 @@ const Chats = () => {
  //load chats and active users evry 1s
  useEffect(()=>{
     //real-time logic
-    // let interval = setInterval(() => {
-    //    if(activeGroup){
-    //     loadChats();
-    // }
-    // }, 1000);
-    // return ()=>clearInterval(interval);
-    if(activeGroup){
+    let interval = setInterval(() => {
+       if(activeGroup){
         loadChats();
     }
+    }, 1000);
+    return ()=>clearInterval(interval);
+    // if(activeGroup){
+    //     loadChats();
+    // }
  }, [activeGroup])
  
  useEffect(()=>{
     loadGroups();
     loadInvites();
- },[]);
+ },[UIShift]);
  
  return (
     <Container fluid style={{paddingTop:'5rem'}}>
         <Row>
             {activeGroup?
-            <Col xs="11" lg="8" className='border border-dark h-75 mx-auto'>
+            <Col xs="11" lg="9" className='border border-dark mx-auto'>
                 <Row>
                     <Col xs lg className="bg-dark text-warning text-center p-1 mb-2">
                         <h3 className='d-flex justify-content-between'>
                             <span className='mx-3'>{activeGroup.name}</span> 
-                            <Button onClick={()=>{removeUserHandler(); setActiveGroup(null)}} variant="warning" className="ms-auto">
+                            <Button onClick={()=>{removeUserHandler(); setActiveGroup(null); setUIShift(prev=>!prev)}} variant="warning" className="ms-auto">
                                 Close X
                             </Button>
                         </h3>

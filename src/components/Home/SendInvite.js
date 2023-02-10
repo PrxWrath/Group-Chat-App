@@ -34,14 +34,14 @@ const SendInvite = (props) => {
    }
 
    return (
-    <Form className='p-2'>
+    <Form className='p-2 w-75 mx-auto'>
         <div className='w-100 p-1 my-2 text-end'>
             <Button onClick={()=>{props.setShowInvite(false)}} variant="danger">Close X</Button>
         </div>
         {alert}
         <Form.Group className="mb-3">
-            <Form.Label>User Name</Form.Label>
-            <Form.Control type="text" id="groupName" placeholder="Type the user name to invite" ref={toRef}/>    
+            <Form.Label>User Name/Email/Phone no.</Form.Label>
+            <Form.Control type="text" id="groupName" placeholder="Type a unique user detail to invite" ref={toRef}/>    
         </Form.Group>
         <Button onClick={inviteHandler} variant="warning" size="md">Send Invite</Button>
     </Form>

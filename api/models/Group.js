@@ -12,11 +12,11 @@ const Group = sequelize.define('groups', {
         type:Sequelize.STRING,
         allowNull: false
     },
-    admin:{
+    groupImg:Sequelize.STRING,
+    createdBy:{
         type:Sequelize.STRING,
-        allowNull: false
-    },
-    groupImg:Sequelize.STRING
+        allowNull:false
+    }
 })  
 
 module.exports = Group;

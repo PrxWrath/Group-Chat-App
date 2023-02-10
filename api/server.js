@@ -5,6 +5,7 @@ const sequelize = require('./util/database');
 const userRoute = require('./routes/users');
 const chatRoute = require('./routes/chats');
 const inviteRoute = require('./routes/invites');
+const adminRoute = require('./routes/admin');
 const User = require('./models/user');
 const Group = require('./models/Group');
 const Invite = require('./models/Invites');
@@ -33,6 +34,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use('/users', userRoute);
 app.use('/chats', chatRoute);
 app.use('/invites', inviteRoute);
+app.use('/admin', adminRoute);
 app.use((req,res,next)=>{
     res.send('<h1>Backend Running :)</h1>');
 })

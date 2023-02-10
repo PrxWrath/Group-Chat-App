@@ -7,7 +7,8 @@ const GroupUser = sequelize.define('groupusers', {
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
-    }
+    },
+    isAdmin: Sequelize.BOOLEAN
 })  
 
 module.exports = GroupUser;

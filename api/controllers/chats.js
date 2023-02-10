@@ -44,14 +44,14 @@ exports.postCreateGroup = async(req,res,next) => {
     try{
         const user = req.user;
 
-        //create new group entry and add the first user
+        //create new group entry and add the first user as admin
         const group = await Group.create({
             name:req.body.name,
             groupImg: req.body.img? req.body.img: null,
-            admin: `${user.email} ${user.name}`
+            createdBy: user.name
         })
 
-        await group.addUser(user);
+        await group.addUser(user, {through: {isAdmin: true}});
 
         res.status(201).json({msg:'Group created'});
     }catch(err){
@@ -62,10 +62,18 @@ exports.postCreateGroup = async(req,res,next) => {
 exports.getUserGroups = async(req,res,next) => {
     try{
         const groups = await req.user.getGroups();
-        
         res.status(200).json(groups);
     }catch(err){
         logger.write(err.stack)
     }
 }
 
+exports.getGroupInfo = async(req,res,next) => {
+    try{
+        const group = await Group.findByPk(req.body.group);
+        const members = await group.getUsers()
+        res.status(200).json({info: group, members});
+    }catch(err){
+        logger.write(err.stack)
+    }
+}
