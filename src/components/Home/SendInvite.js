@@ -14,7 +14,7 @@ const SendInvite = (props) => {
     try{
         const res = await axios.post("http://localhost:4000/invites/send-invite", {
             to: toRef.current.value,
-            for: props.Group
+            for: props.Group.id
         }, {headers:{
             'Authorization' : token
         }})

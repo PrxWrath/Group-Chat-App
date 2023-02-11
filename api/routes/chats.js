@@ -8,5 +8,6 @@ router.post('/send-chat', userAuth.authenticate, chatsController.postAddChat);
 router.post('/create-group', userAuth.authenticate, chatsController.postCreateGroup);
 router.get('/groups', userAuth.authenticate, chatsController.getUserGroups);
 router.post('/group-info', chatsController.getGroupInfo);
+router.post('/send-file', userAuth.authenticate, chatsController.postSendFile);
 
 module.exports = router;

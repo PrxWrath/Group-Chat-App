@@ -2,7 +2,6 @@ const logger = require('../services/logger');
 const Group = require('../models/Group');
 const { Op } = require('sequelize');
 
-
 exports.postAddChat = async (req,res,next) => {
     try{
         const user = req.user;
@@ -73,6 +72,22 @@ exports.getGroupInfo = async(req,res,next) => {
         const group = await Group.findByPk(req.body.group);
         const members = await group.getUsers()
         res.status(200).json({info: group, members});
+    }catch(err){
+        logger.write(err.stack)
+    }
+}
+
+exports.postSendFile = async(req,res,next) => {
+    try{
+        const user = req.user;
+        await user.createChat({
+            message: req.body.fileName,
+            groupId: req.body.group,
+            from: `${user.email} ${user.name}`,
+            fileUrl: req.body.fileUrl        
+        })
+
+        res.status(201).json({msg:'File uploaded'});
     }catch(err){
         logger.write(err.stack)
     }

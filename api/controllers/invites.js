@@ -19,7 +19,7 @@ exports.sendInvite = async(req,res,next) => {
         //user name invalid
         res.json({err:'User not found'}).status(404);
      }else{
-        const invitedFor = await Group.findByPk(req.body.for.id);
+        const invitedFor = await Group.findByPk(req.body.for);
         const user = req.user;
         
         //create a new invite entry for a specific group and user
