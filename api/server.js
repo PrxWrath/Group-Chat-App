@@ -10,6 +10,7 @@ const User = require('./models/user');
 const Group = require('./models/Group');
 const Invite = require('./models/Invites');
 const GroupUser = require('./models/GroupUsers');
+const Archive = require('./models/Archive');
 const Chat = require('./models/Chat');
 const Active = require('./models/Active');
 const ForgotRequest = require('./models/Forgot');
@@ -53,6 +54,10 @@ Group.belongsToMany(User, {through: GroupUser});
 User.belongsToMany(Group, {through: GroupUser});
 User.hasMany(Invite);
 Invite.belongsTo(User);
+User.hasMany(Archive);
+Archive.belongsTo(User);
+Group.hasMany(Archive);
+Archive.belongsTo(Group);
 
 sequelize.sync().then(res=>{
     app.listen(4000);
