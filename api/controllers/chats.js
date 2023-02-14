@@ -1,5 +1,6 @@
 const logger = require('../services/logger');
 const Group = require('../models/Group');
+const Chats = require('../models/Chat');
 const { Op } = require('sequelize');
 
 exports.postAddChat = async (req,res,next) => {
@@ -88,6 +89,18 @@ exports.postSendFile = async(req,res,next) => {
         })
 
         res.status(201).json({msg:'File uploaded'});
+    }catch(err){
+        logger.write(err.stack)
+    }
+}
+
+exports.postDeleteChat = async(req,res,next) => {
+    try{
+        const chat = await Chats.findByPk(req.body.chat);
+        if(chat){
+            await chat.destroy();
+        }
+        res.status(200).json("Deleted chat!");
     }catch(err){
         logger.write(err.stack)
     }

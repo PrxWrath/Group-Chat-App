@@ -9,5 +9,5 @@ router.post('/create-group', userAuth.authenticate, chatsController.postCreateGr
 router.get('/groups', userAuth.authenticate, chatsController.getUserGroups);
 router.post('/group-info', chatsController.getGroupInfo);
 router.post('/send-file', userAuth.authenticate, chatsController.postSendFile);
-
+router.post('/delete-chat', chatsController.postDeleteChat);
 module.exports = router;
