@@ -88,15 +88,15 @@ const Chats = () => {
  //load chats and active users evry 1s
  useEffect(()=>{
     //real-time logic
-    let interval = setInterval(() => {
-       if(activeGroup){
-        loadChats();
-    }
-    }, 1000);
-    return ()=>clearInterval(interval);
-    // if(activeGroup){
+    // let interval = setInterval(() => {
+    //    if(activeGroup){
     //     loadChats();
     // }
+    // }, 1000);
+    //return ()=>clearInterval(interval);
+    if(activeGroup){
+        loadChats();
+    }
  }, [activeGroup])
  
  useEffect(()=>{
@@ -121,7 +121,7 @@ const Chats = () => {
                 </Row>
                 <Row>
                     <Col xs lg>
-                        <ChatList active={active} chats={chats} scroll={scroll} Group={activeGroup}/>
+                        <ChatList active={active} chats={chats} scroll={scroll} Group={activeGroup} loadChats={loadChats}/>
                     </Col>
                 </Row>
                 <Row>

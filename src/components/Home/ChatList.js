@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, {useEffect, useRef, useState} from 'react'
 import { Alert, Row, Col, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
@@ -22,6 +23,17 @@ const ChatList = (props) => {
    scrollEndHandler();
   },[props.scroll])
 
+  const deleteChatHandler = async(chat) => {
+    try{
+        const res = await axios.post("http://localhost:4000/chats/delete-chat", {chat});
+        if(res.status === 200){
+            localStorage.removeItem(`Chats ${props.Group.id}`)
+            props.loadChats();
+        }
+    }catch(err){
+        console.log(err.message)
+    }
+  }
   
 
   return (
@@ -84,7 +96,19 @@ const ChatList = (props) => {
                     <Row>
                         <Col xs lg="6" className='fw-bold mb-2'>
                         {/*Check if the sender is You otherwise display the name*/}
-                        {chat.from.substring(0,chat.from.indexOf(' '))===email ? 'You': chat.from.substring(chat.from.indexOf(' '))} 
+                        {chat.from.substring(0,chat.from.indexOf(' '))===email ? 
+                        <>
+                            <span>
+                            You
+                            </span>
+                            
+                            <span className='w-50 ms-auto text-end'>
+                            <Button size = "sm" onClick={()=>{deleteChatHandler(chat.id)}} variant='outline-danger' className='ms-2'>Delete</Button>
+                            </span>
+                            
+                        </>
+                        
+                        : chat.from.substring(chat.from.indexOf(' '))} 
                         </Col>
                     </Row>
                     
